@@ -83,29 +83,68 @@
       opacity: 0.8;
     }
 
-    /* Toast Notification */
+    /* Toast Notification Modern */
     .toast {
-      visibility: hidden;
-      min-width: 220px;
-      margin-left: -110px;
-      background: rgba(0,0,0,0.85);
-      color: #fff;
-      text-align: center;
-      border-radius: 8px;
-      padding: 12px;
       position: fixed;
-      z-index: 1;
+      top: 20px;
       left: 50%;
-      bottom: 30px;
-      font-size: 15px;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
       opacity: 0;
-      transition: opacity 0.4s, bottom 0.4s;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 90%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .toast.show {
-      visibility: visible;
       opacity: 1;
-      bottom: 50px;
+      visibility: visible;
+      top: 30px;
+    }
+
+    .toast-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff0099, #ff66cc);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .toast-message {
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(to right, #ff0099, #ff66cc);
+      border-radius: 0 0 12px 12px;
+      width: 100%;
+      transform: scaleX(1);
+      transform-origin: left;
+      transition: transform 2.5s linear;
+    }
+
+    .toast.show .toast-progress {
+      transform: scaleX(0);
     }
   </style>
 </head>
@@ -125,7 +164,11 @@
     <footer>© Elaina Store 2025, All Right Reserved</footer>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast">
+    <div class="toast-icon">!</div>
+    <div class="toast-message">Menuju WhatsApp...</div>
+    <div class="toast-progress"></div>
+  </div>
 
   <script>
     function openLink(name, url) {
@@ -137,10 +180,18 @@
 
     function showToast(message) {
       const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.className = "toast show";
+      const toastMessage = toast.querySelector(".toast-message");
+      
+      toastMessage.textContent = message;
+      toast.className = "toast";
+      
+      // Trigger reflow
+      void toast.offsetWidth;
+      
+      toast.classList.add("show");
+      
       setTimeout(() => {
-        toast.className = toast.className.replace("show", "");
+        toast.classList.remove("show");
       }, 2500);
     }
   </script>
